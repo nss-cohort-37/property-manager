@@ -11,19 +11,31 @@ export const BuildingList = () => {
     const buildings = useBuildings()
     const tenants = useTenants()
 
-    const render = () => {
+    eventHub.addEventListener("buildingStateChanged", event => {
+        const updatedTenants = useTenants()
+        const updatedBuildings = useBuildings()
+        render(updatedBuildings, updatedTenants)
+    })
+
+    eventHub.addEventListener("tenantStateChanged", event => {
+        const updatedTenants = useTenants()
+        const updatedBuildings = useBuildings()
+        render(updatedBuildings, updatedTenants)
+    })
+
+    const render = (arrayOfBuildings, arrayOfTenants) => {
         contentTarget.innerHTML = `
-            ${BuildingCount(buildings.length)}
+            ${BuildingCount(arrayOfBuildings.length)}
 
             ${
-                buildings.map(
+                arrayOfBuildings.map(
                     building => {
-                        return BuildingCard(building, tenants)
+                        return BuildingCard(building, arrayOfTenants)
                     }
                 ).join("")
             }
         `
     }
 
-    render()
+    render(buildings, tenants)
 }

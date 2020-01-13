@@ -7,6 +7,14 @@ const contentTarget = document.querySelector(".tenantForm")
 export const TenantForm = () => {
     const buildings = useBuildings()
 
+    eventHub.addEventListener("buildingStateChanged", e => {
+        // Get the updated state
+        const newBuildings = useBuildings()
+
+        // Render the updated state as HTML
+        render(newBuildings)
+    })
+
     eventHub.addEventListener("click", clickEvent => {
         if (clickEvent.target.id === "saveTenant") {
             // Get what user entered
@@ -30,7 +38,7 @@ export const TenantForm = () => {
         }
     })
 
-    const render = () => {
+    const render = (buildingArray) => {
         contentTarget.innerHTML = `
             <h3>Add Tenant</h3>
             <div>
@@ -40,7 +48,7 @@ export const TenantForm = () => {
                 Building: <select id="buildingSelect">
                     <option>Please select a building...</option>
                     ${
-                        buildings.map(building => {
+                        buildingArray.map(building => {
                             return `<option value="building--${building.id}">${building.address}</option>`
                         }).join("")
                     }
@@ -52,5 +60,5 @@ export const TenantForm = () => {
         `
     }
 
-    render()
+    render(buildings)
 }
